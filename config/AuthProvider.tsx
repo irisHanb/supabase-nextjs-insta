@@ -10,7 +10,7 @@ export default function AuthProvider({ accessToken, children }) {
 
   useEffect(() => {
     const {
-      data: { subscription: authListener },
+      data: { subscription: authListner },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.access_token !== accessToken) {
         router.refresh();
@@ -18,7 +18,7 @@ export default function AuthProvider({ accessToken, children }) {
     });
 
     return () => {
-      authListener.unsubscribe();
+      authListner.unsubscribe();
     };
   }, [accessToken, supabase, router]);
 
