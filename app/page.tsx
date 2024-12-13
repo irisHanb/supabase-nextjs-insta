@@ -1,4 +1,4 @@
-import UI from "./ui";
+import LogoutButton from "components/logout-button";
 
 export const metadata = {
   title: "Ingram",
@@ -6,5 +6,10 @@ export const metadata = {
 };
 
 export default function Home() {
-  return <main className="">ingram</main>;
+  return (
+    <main className="w-full h-screen flex items-center justify-center flex-col gap-2">
+      <h1 className="font-bold text-xl">Welcome {"user name!!!"}</h1>
+      <LogoutButton />
+    </main>
+  );
 }
