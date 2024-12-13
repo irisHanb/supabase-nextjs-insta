@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { createBrowserSupabaseClient } from "utils/supabase/client";
 
 export default function AuthProvider({ accessToken, children }) {
