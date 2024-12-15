@@ -2,38 +2,47 @@
 
 import { Button, Input } from "@material-tailwind/react";
 import { useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { useFormik } from "formik";
+import { useMemo, useState } from "react";
 import { createBrowserSupabaseClient } from "utils/supabase/client";
+import * as Yup from "yup";
 
 export default function SignUp({ setView }) {
-  const [otp, setOtp] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [confirmationRequired, setConfirmationRequired] = useState(false);
 
+  const validationSchema = useMemo(() => {
+    if (confirmationRequired) {
+      return Yup.object().shape({
+        otp: Yup.string().required().length(6, "6자리 숫자를 입력해주세요."),
+      });
+    } else {
+      return Yup.object().shape({
+        email: Yup.string()
+          .email("이메일 형식이 올바르지 않습니다.")
+          .required("이메일을 입력해주세요."),
+        password: Yup.string()
+          .min(8, "8자 이상 입력해주세요.")
+          .required("비밀번호를 입력해주세요."),
+      });
+    }
+  }, [confirmationRequired]);
+
   const supabase = createBrowserSupabaseClient();
-  const signupMutation = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: "http://localhost:3000/signup/confirm",
-        },
-      });
-      if (error) alert(error.message);
-      if (data) setConfirmationRequired(true);
+  // signup mutation
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      otp: "",
     },
-  });
-  const verifyOtpMutation = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.auth.verifyOtp({
-        type: "signup",
-        email,
-        token: otp,
-      });
-      if (error) alert(error.message);
-      if (data) console.log("otp ok");
+    validationSchema,
+    onSubmit: async (values) => {
+      if (confirmationRequired) {
+        verifyOtpMutation.mutate();
+      } else {
+        signupMutation.mutate();
+      }
     },
   });
 
@@ -49,45 +58,85 @@ export default function SignUp({ setView }) {
     console.log(data);
   };
 
+  const signupMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.auth.signUp({
+        email: formik.values.email,
+        password: formik.values.password,
+        options: {
+          emailRedirectTo: "http://localhost:3000/signup/confirm",
+        },
+      });
+
+      if (data) {
+        setConfirmationRequired(true);
+      }
+
+      if (error) {
+        alert(error.message);
+      }
+    },
+  });
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.auth.verifyOtp({
+        type: "signup",
+        email: formik.values.email,
+        token: formik.values.otp,
+      });
+
+      if (data) {
+        console.log(data);
+      }
+
+      if (error) {
+        alert(error.message);
+      }
+    },
+  });
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="pt-10 pb-6 px-10 w-full flex gap-4 flex-col items-center justify-center max-w-lg border border-gray-400 bg-white ">
-        <img src="/images/instalogo.png" alt="logo" className="w-60 mb-6" />
+    <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+      <div className="pt-10 pb-6 px-10 w-full flex flex-col items-center justify-center max-w-lg border border-gray-400 bg-white gap-2">
+        <img src={"/images/inflearngram.png"} className="w-60 mb-6" />
         {confirmationRequired ? (
-          <Input
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            label="otp"
-            type="text"
-            className="w-full rounded-sm"
-            placeholder="6자리 OTP를 입력해주세요."
-          />
+          <>
+            <Input
+              value={formik.values.otp}
+              onChange={formik.handleChange}
+              label="otp"
+              name="otp"
+              type="text"
+              className="w-full rounded-sm"
+              placeholder="6자리 OTP를 입력해주세요."
+            />
+            <span className="text-red-700">{formik.errors.otp}</span>
+          </>
         ) : (
           <>
             <Input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formik.values.email}
+              onChange={formik.handleChange}
               label="email"
+              name="email"
               type="email"
               className="w-full rounded-sm"
             />
+            <span className="text-red-700">{formik.errors.email}</span>
             <Input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formik.values.password}
+              onChange={formik.handleChange}
               label="password"
+              name="password"
               type="password"
               className="w-full rounded-sm"
             />
+            <span className="text-red-700">{formik.errors.password}</span>
           </>
         )}
         <Button
-          onClick={() => {
-            if (confirmationRequired) {
-              verifyOtpMutation.mutate();
-            } else {
-              signupMutation.mutate();
-            }
-          }}
+          type="submit"
           loading={
             confirmationRequired
               ? verifyOtpMutation.isPending
@@ -104,21 +153,22 @@ export default function SignUp({ setView }) {
           {confirmationRequired ? "인증하기" : "가입하기"}
         </Button>
         <Button
-          className="w-full text-md py-2 bg-yellow-700"
           onClick={() => signInWithKakao()}
+          className="w-full text-md py-1 bg-yellow-700"
         >
           카카오 로그인
         </Button>
       </div>
+
       <div className="py-4 w-full text-center max-w-lg border border-gray-400 bg-white">
         이미 계정이 있으신가요?{" "}
         <button
           className="text-light-blue-600 font-bold"
           onClick={() => setView("SIGNIN")}
         >
-          로그인 하기
+          로그인하기
         </button>
       </div>
-    </div>
+    </form>
   );
 }

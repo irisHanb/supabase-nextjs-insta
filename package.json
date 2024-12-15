@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-types": "npx supabase gen types typescript --project-id kwhikbbzoshvozbjvoyr --schema public > types_db.ts"
+    "generate-types": "npx supabase gen types typescript --project-id wrppqgamztpykiyxmwwu --schema public > types_db.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -16,11 +16,15 @@
     "@mui/icons-material": "^5.15.17",
     "@supabase/ssr": "^0.3.0",
     "@tanstack/react-query": "^5.37.1",
+    "formik": "^2.4.6",
+    "javascript-time-ago": "^2.5.10",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "react-intersection-observer": "^9.13.1",
-    "recoil": "^0.7.7"
+    "react-dropzone": "^14.2.3",
+    "react-intersection-observer": "^9.10.3",
+    "recoil": "^0.7.7",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",
@@ -29,7 +33,6 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.19",
     "postcss": "^8",
-    "react-dropzone": "^14.3.5",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }

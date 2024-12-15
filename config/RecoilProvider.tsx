@@ -2,8 +2,6 @@
 
 import { RecoilRoot } from "recoil";
 
-export default function RecoilClientProvider({
-  children,
-}: React.PropsWithChildren) {
+export default function RecoilProvider({ children }: React.PropsWithChildren) {
   return <RecoilRoot>{children}</RecoilRoot>;
 }
