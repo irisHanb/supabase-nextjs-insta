@@ -41,8 +41,8 @@ export default async function RootLayout({ children }) {
             </head>
             <AuthProvider accessToken={session?.access_token}>
               <body className={inter.className}>
-                {/* {session?.user ? <MainLayout>{children}</MainLayout> : <Auth />} */}
-                <MainLayout>{children}</MainLayout>
+                {session?.user ? <MainLayout>{children}</MainLayout> : <Auth />}
+                {/* <MainLayout>{children}</MainLayout> */}
               </body>
             </AuthProvider>
           </html>
