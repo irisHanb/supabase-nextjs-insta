@@ -1,2 +1,3 @@
-export const getRandomImage = (index: number) =>
-  `https://randomuser.me/api/portraits/med/men/${index}.jpg`;
+export const getRandomImage = (index: number) => {
+  return `https://randomuser.me/api/portraits/med/men/${index}.jpg`;
+};

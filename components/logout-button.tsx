@@ -7,7 +7,12 @@ export default function LogoutButton() {
   const supabase = createBrowserSupabaseClient();
 
   return (
-    <Button color="red" onClick={async () => supabase.auth.signOut()}>
+    <Button
+      onClick={async () => {
+        supabase.auth.signOut();
+      }}
+      color="red"
+    >
       로그아웃
     </Button>
   );

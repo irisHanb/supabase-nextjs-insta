@@ -1,6 +1,6 @@
-import ChatPeopleList from "components/chat/chat-people-list";
-import ChatScreen from "components/chat/chat-screen";
-import Person from "components/chat/person";
+import ChatPeopleList from "components/chat/ChatPeopleList";
+import ChatScreen from "components/chat/ChatScreen";
+import Person from "components/chat/Person";
 import { createServerSupabaseClient } from "utils/supabase/server";
 
 export default async function ChatPage() {
@@ -8,8 +8,9 @@ export default async function ChatPage() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="w-full h-screen flex justify-center items-center">
       <ChatPeopleList loggedInUser={session?.user} />
       <ChatScreen />
     </div>

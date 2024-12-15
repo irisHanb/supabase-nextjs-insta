@@ -3,13 +3,11 @@
 export default function Message({ isFromMe, message }) {
   return (
     <div
-      className={`flex w-fit px-3 py-1 rounded-md
-      ${
+      className={`w-fit p-3 rounded-md ${
         isFromMe
-          ? "bg-light-blue-600 text-white ml-auto"
+          ? "ml-auto bg-light-blue-600 text-white"
           : "bg-gray-100 text-black"
-      }
-    `}
+      }`}
     >
       <p>{message}</p>
     </div>
