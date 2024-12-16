@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      Book: {
+        Row: {
+          author: string
+          coverImgUrl: string
+          description: string
+          id: number
+          publisher: string
+          searchIndex: string
+          subTitle: string
+          title: string
+        }
+        Insert: {
+          author: string
+          coverImgUrl: string
+          description: string
+          id?: number
+          publisher: string
+          searchIndex?: string
+          subTitle: string
+          title: string
+        }
+        Update: {
+          author?: string
+          coverImgUrl?: string
+          description?: string
+          id?: number
+          publisher?: string
+          searchIndex?: string
+          subTitle?: string
+          title?: string
+        }
+        Relationships: []
+      }
       message: {
         Row: {
           created_at: string
@@ -66,25 +99,57 @@ export type Database = {
         }
         Relationships: []
       }
+      Review: {
+        Row: {
+          author: string
+          bookId: number
+          content: string
+          createdAt: string
+          id: number
+        }
+        Insert: {
+          author: string
+          bookId: number
+          content: string
+          createdAt?: string
+          id?: number
+        }
+        Update: {
+          author?: string
+          bookId?: number
+          content?: string
+          createdAt?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Review_bookId_fkey"
+            columns: ["bookId"]
+            isOneToOne: false
+            referencedRelation: "Book"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       todo: {
         Row: {
-          completed: boolean
           created_at: string
           id: number
+          isDone: boolean
           title: string
           updated_at: string | null
         }
         Insert: {
-          completed: boolean
           created_at?: string
           id?: number
+          isDone: boolean
           title: string
           updated_at?: string | null
         }
         Update: {
-          completed?: boolean
           created_at?: string
           id?: number
+          isDone?: boolean
           title?: string
           updated_at?: string | null
         }
@@ -186,4 +251,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
