@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import Person from "./Person";
+
 import { useRecoilState } from "recoil";
 import {
   presenceState,
@@ -11,6 +11,7 @@ import {
 import { getAllUsers } from "actions/chatActions";
 import { createBrowserSupabaseClient } from "utils/supabase/client";
 import { useEffect } from "react";
+import Person from "./person";
 
 export default function ChatPeopleList({ loggedInUser }) {
   const [selectedUserId, setSelectedUserId] =
