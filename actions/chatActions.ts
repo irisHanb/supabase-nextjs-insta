@@ -1,9 +1,6 @@
 "use server";
 
-import {
-  createServerSupabaseAdminClient,
-  createServerSupabaseClient,
-} from "utils/supabase/server";
+import { createServerSupabaseAdminClient } from "utils/supabase/server";
 
 export async function getAllUsers() {
   const supabase = await createServerSupabaseAdminClient();
@@ -19,12 +16,8 @@ export async function getAllUsers() {
 
 export async function getUserById(userId) {
   const supabase = await createServerSupabaseAdminClient();
-
   const { data, error } = await supabase.auth.admin.getUserById(userId);
 
-  if (error) {
-    return null;
-  }
-
+  if (error) return null;
   return data.user;
 }
