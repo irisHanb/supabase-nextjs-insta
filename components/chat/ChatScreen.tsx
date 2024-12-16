@@ -4,6 +4,7 @@ import Person from "./person";
 import Message from "./message";
 import { useRecoilValue } from "node_modules/recoil";
 import {
+  presenceState,
   selectedUserIdState,
   selectedUserIndexState,
 } from "utils/recoil/atoms";
@@ -16,6 +17,7 @@ import { createBrowserSupabaseClient } from "utils/supabase/client";
 export default function ChatScreen() {
   const selectedUserId = useRecoilValue(selectedUserIdState);
   const selectedUserIndex = useRecoilValue(selectedUserIndexState);
+  const presence = useRecoilValue(presenceState);
   const [message, setMessage] = useState("");
 
   const supabase = createBrowserSupabaseClient();
@@ -75,7 +77,7 @@ export default function ChatScreen() {
         isActive={false}
         name={selectedUserQuery.data?.email?.split("@")[0]}
         onChatScreen={true}
-        onlineAt={new Date().toISOString()}
+        onlineAt={presence?.[selectedUserId]?.[0]?.onlineAt}
         userId={selectedUserQuery.data?.id}
       />
 

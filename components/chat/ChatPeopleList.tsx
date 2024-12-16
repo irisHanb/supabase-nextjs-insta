@@ -10,6 +10,7 @@ import {
 } from "utils/recoil/atoms";
 import { getAllUsers } from "actions/chatActions";
 import { createBrowserSupabaseClient } from "utils/supabase/client";
+import { useEffect } from "react";
 
 export default function ChatPeopleList({ loggedInUser }) {
   const [selectedUserId, setSelectedUserId] =
@@ -31,6 +32,35 @@ export default function ChatPeopleList({ loggedInUser }) {
 
   const supabase = createBrowserSupabaseClient();
 
+  useEffect(() => {
+    const channel = supabase.channel("online-users", {
+      config: {
+        presence: {
+          key: loggedInUser.id,
+        },
+      },
+    });
+
+    channel.on("presence", { event: "sync" }, () => {
+      const newState = channel.presenceState();
+      const newStateObj = JSON.parse(JSON.stringify(newState));
+      setPresence(newStateObj);
+    });
+
+    channel.subscribe(async (status) => {
+      if (status != "SUBSCRIBED") return;
+      const newPresenceStatus = await channel.track({
+        onlineAt: new Date().toISOString(),
+      });
+
+      console.log(newPresenceStatus);
+    });
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
+
   return (
     <div className="h-screen min-w-60 flex flex-col bg-gray-50">
       {getAllUsersQuery.data?.map((user, index) => (
@@ -44,7 +74,7 @@ export default function ChatPeopleList({ loggedInUser }) {
           isActive={selectedUserId === user.id}
           name={user.email.split("@")[0]}
           onChatScreen={false}
-          onlineAt={new Date().toISOString()}
+          onlineAt={presence?.[user.id]?.[0]?.onlineAt}
           userId={user.id}
         />
       ))}
