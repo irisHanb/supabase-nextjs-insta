@@ -1,6 +1,5 @@
 import ChatPeopleList from "components/chat/ChatPeopleList";
 import ChatScreen from "components/chat/ChatScreen";
-import Person from "components/chat/Person";
 import { createServerSupabaseClient } from "utils/supabase/server";
 
 export default async function ChatPage() {
